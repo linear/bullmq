@@ -223,6 +223,7 @@ export class Worker<
       stalledInterval: 30000,
       autorun: true,
       runRetryDelay: 15000,
+      pullMode: 'sequential',
       ...this.opts,
     };
 
@@ -409,6 +410,9 @@ export class Worker<
               this.opts.runRetryDelay,
             ),
           );
+          if (this.opts.pullMode === 'sequential') {
+            break;
+          }
         }
 
         const job = await asyncFifoQueue.fetch();
