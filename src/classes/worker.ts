@@ -445,8 +445,14 @@ export class Worker<
         let job: Job<DataType, ResultType, NameType> | void;
         // Since there can be undefined jobs in the queue (when a job fails or queue is empty)
         // we iterate until we find a job.
-        while (!job && asyncFifoQueue.numTotal() > 0) {
+        while (asyncFifoQueue.numTotal() > 0) {
           job = await asyncFifoQueue.fetch();
+          if (job) {
+            break;
+          }
+          if (asyncFifoQueue.numQueued() === 0) {
+            break;
+          }
         }
 
         if (job) {
