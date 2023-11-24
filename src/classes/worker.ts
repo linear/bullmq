@@ -418,9 +418,7 @@ export class Worker<
           );
           asyncFifoQueue.add(fetchedJob);
 
-          numTotal = asyncFifoQueue.numTotal();
-
-          if (this.waiting && numTotal > 1) {
+          if (this.waiting) {
             // We have a job waiting but we have others that we could start processing already
             break;
           }
@@ -428,6 +426,8 @@ export class Worker<
           // We await here so that we fetch jobs in sequence, this is important to avoid unnecessary calls
           // to Redis in high concurrency scenarios.
           const job = await fetchedJob;
+
+          numTotal = asyncFifoQueue.numTotal();
 
           // No more jobs waiting but we have others that could start processing already
           if (!job && numTotal > 1) {
